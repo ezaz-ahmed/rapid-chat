@@ -24,6 +24,7 @@ const Home = () => {
           Sign in to your account
         </h2>
       </div>
+
       <AuthForm />
     </div>
   );
