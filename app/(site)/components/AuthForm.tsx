@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import axios from 'axios';
+import { signIn } from 'next-auth/react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { BsGithub, BsGoogle } from 'react-icons/bs';
 
@@ -40,20 +41,47 @@ const AuthForm = () => {
     setIsLoading(true);
 
     if (variant === 'LOGIN') {
-      // nextAuth
+      signIn('credentials', {
+        ...data,
+        redirect: false,
+      })
+        .then(callBack => {
+          if (callBack?.error) {
+            toast.error('Invalid Credentials');
+          }
+
+          if (callBack?.ok && !callBack.error) {
+            toast.success('ok');
+          }
+        })
+        .finally(() => setIsLoading(true));
+
+      setIsLoading(false);
     }
 
     if (variant === 'REGISTER') {
       axios
         .post('api/register', data)
-        .catch(() => toast.error('Something went wrong'));
+        .catch(() => toast.error('Something went wrong'))
+        .finally(() => setIsLoading(false));
     }
   };
 
   const socialAction = (action: string) => {
     setIsLoading(true);
+    signIn(action, { redirect: false })
+      .then(callBack => {
+        if (callBack?.error) {
+          toast.error('Invalid Credentials');
+        }
 
-    // NextAuth Social Sign In
+        if (callBack?.ok && !callBack.error) {
+          toast.success('ok');
+        }
+      })
+      .finally(() => setIsLoading(true));
+
+    setIsLoading(false);
   };
 
   return (
