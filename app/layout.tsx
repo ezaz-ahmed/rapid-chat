@@ -1,3 +1,4 @@
+import AuthContext from './context/AuthContext';
 import ToasterContext from './context/ToasterContext';
 import './globals.css';
 import { Inter } from 'next/font/google';
@@ -9,17 +10,17 @@ export const metadata = {
   description: 'Rapid Chat ~ Chat with your friend more secure',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang='en'>
       <body className={inter.className}>
-        {children}
-        <ToasterContext />
+        <AuthContext>
+          {children}
+          <ToasterContext />
+        </AuthContext>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

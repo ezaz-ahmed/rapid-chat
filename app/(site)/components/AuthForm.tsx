@@ -1,21 +1,30 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
 import { BsGithub, BsGoogle } from 'react-icons/bs';
 
 import Button from '~/app/components/Button';
 import Input from '~/app/components/inputs/Input';
 import AuthSocialButton from './AuthSocialButton';
-import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 type Variant = 'LOGIN' | 'REGISTER';
 
 const AuthForm = () => {
+  const session = useSession();
+  const router = useRouter();
   const [variant, setVariant] = useState<Variant>('LOGIN');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (session?.status === 'authenticated') {
+      router.push('/users');
+    }
+  }, [session?.status, router]);
 
   const toggleVariant = useCallback(() => {
     if (variant === 'LOGIN') {
@@ -51,17 +60,16 @@ const AuthForm = () => {
           }
 
           if (callBack?.ok && !callBack.error) {
-            toast.success('ok');
+            router.push('/users');
           }
         })
-        .finally(() => setIsLoading(true));
-
-      setIsLoading(false);
+        .finally(() => setIsLoading(false));
     }
 
     if (variant === 'REGISTER') {
       axios
         .post('api/register', data)
+        .then(() => signIn('credentials', data))
         .catch(() => toast.error('Something went wrong'))
         .finally(() => setIsLoading(false));
     }
@@ -79,9 +87,7 @@ const AuthForm = () => {
           toast.success('ok');
         }
       })
-      .finally(() => setIsLoading(true));
-
-    setIsLoading(false);
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -90,6 +96,7 @@ const AuthForm = () => {
         <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
           {variant === 'REGISTER' && (
             <Input
+              required
               label='Name'
               type='text'
               id='name'
@@ -99,6 +106,7 @@ const AuthForm = () => {
           )}
 
           <Input
+            required
             label='Email'
             type='email'
             id='email'
@@ -107,6 +115,7 @@ const AuthForm = () => {
           />
 
           <Input
+            required
             label='Password'
             type='password'
             id='password'
@@ -115,7 +124,12 @@ const AuthForm = () => {
           />
 
           <div>
-            <Button type='submit' fullWidth>
+            <Button
+              type='submit'
+              disabled={isLoading}
+              fullWidth
+              isLoading={isLoading}
+            >
               {variant === 'LOGIN' ? 'Sign In' : 'Register'}
             </Button>
           </div>
