@@ -1,15 +1,13 @@
-import { FC, ReactNode } from 'react';
+import { ComponentProps, FC, ReactNode } from 'react';
 import clsx from 'clsx';
 
-interface ButtonProps {
-  type?: 'button' | 'submit' | 'reset' | undefined;
+interface ButtonProps extends ComponentProps<'button'> {
   isLoading?: boolean;
   fullWidth?: boolean;
   children?: ReactNode;
   onClick?: () => void;
   secondary?: boolean;
   danger?: boolean;
-  disabled?: boolean;
 }
 
 const Button: FC<ButtonProps> = ({

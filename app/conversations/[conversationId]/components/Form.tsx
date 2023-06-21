@@ -53,6 +53,7 @@ const Form = () => {
           register={register}
           errors={errors}
           required
+          type='text'
           placeholder='Write a message'
         />
 
