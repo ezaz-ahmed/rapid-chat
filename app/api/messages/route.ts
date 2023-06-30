@@ -13,6 +13,7 @@ export async function POST(request: Request) {
       return new NextResponse('Unauthorizaed', { status: 401 })
     }
 
+
     const newMessage = await prisma.message.create({
       data: {
         body: message,
@@ -39,6 +40,7 @@ export async function POST(request: Request) {
       }
     })
 
+
     const updatedConversation = await prisma.conversation.update({
       where: {
         id: conversationId
@@ -60,6 +62,8 @@ export async function POST(request: Request) {
         }
       }
     })
+
+    return NextResponse.json({ status: 200 })
 
   } catch (error: any) {
     console.log(error)

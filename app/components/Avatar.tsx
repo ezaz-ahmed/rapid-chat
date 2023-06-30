@@ -16,6 +16,7 @@ const Avatar: FC<AvatarProps> = ({ user }) => {
           alt='Avatar'
           src={user?.image || '/images/placeholder.png'}
           fill
+          sizes='36px'
         />
       </div>
 
